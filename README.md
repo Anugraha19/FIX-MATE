@@ -32,15 +32,17 @@ The UI follows the supplied Figma login design (sand/tan backdrop, frosted-glass
 | Database | MySQL, Sequelize ORM (models, migrations, seeders, associations), mysql2 |
 | Tooling | npm, `.env` files, concurrently |
 
+No PHP, no Firebase, no MongoDB.
+
 ---
 
 ## 3. Folder structure
 FixMate/
 ├── client/ React + Vite app
-│ ├── public/ login-bg.jpg, logo.png (branding assets)
+│ ├── public/ put login-bg.jpg and logo.png here (Figma exports)
 │ └── src/
 │ ├── components/ Navbar, Footer, ServiceCard, ProviderCard, BookingCard,
-│ │ Modal, ProtectedRoute, DashboardLayout, ui.jsx
+│ │ Modal, ProtectedRoute, DashboardLayout, ui.jsx (Alert, Loading, ...)
 │ ├── pages/ Home, Login, Register, Services, ServiceDetails, Providers,
 │ │ ├── customer/ ProviderDetails, Booking, BookingConfirmation ...
 │ │ ├── provider/
@@ -62,7 +64,7 @@ FixMate/
 │ ├── middleware/ authMiddleware, roleMiddleware, errorMiddleware
 │ ├── events/ bookingEvents.js (EventEmitter)
 │ ├── jobs/ reminderJob.js (cron)
-│ ├── utils/ AppError, asyncHandler, logger, bookingWorkflow, reportExport ...
+│ ├── utils/ AppError, asyncHandler, logger, bookingWorkflow, reportExport (streams) ...
 │ ├── data/ bookingConfig.json (time slots, read with fs)
 │ ├── logs/ reports/ written at run time
 │ ├── app.js builds the Express app
@@ -129,18 +131,16 @@ Role	Email	Password
 Admin	admin@fixmate.com	admin123
 Customer	meera@example.com (also arjun@, fathima@, sanjay@, priya@, rahul@example.com)	password123
 Provider	rajesh@fixmate.com (also anil@, suresh@, vineeth@, faisal@, joseph@fixmate.com)	password123
-⚠️ Before going live: delete all seeded accounts or change every password. The default password123 / admin123 are publicly documented and unsafe for production.
+Change these before any real deployment. The seed contains 9 categories, 14 services, 6 providers, 6 customers, 14 bookings in different statuses, 6 reviews and availability windows.
 
-The seed contains 9 categories, 14 services, 6 providers, 6 customers, 14 bookings in different statuses, 6 reviews and availability windows.
+The Figma images
+The background photo and the logo bitmap live in Figma and could not be downloaded while building. Export them and save them as:
 
-Branding assets
-The following files belong in client/public/:
+client/public/login-bg.jpg – background photo for the login and home pages
 
-login-bg.jpg – background photo for the login and home pages
+client/public/logo.png – the FM house logo
 
-logo.png – the FM house logo
-
-Until these are supplied, a warm sand colour and an SVG stand-in logo are shown. Nothing breaks without them.
+Until then a warm sand colour is shown and the logo is a drawn SVG stand-in (house mark + "FM" in Leckerli One). Nothing breaks without the files.
 
 5. User roles and authorization
 Role	Can do
@@ -260,55 +260,9 @@ UI – no horizontal scrolling at 375, 768, 1024 and 1920 px; sidebar becomes a 
 
 To test the API yourself use Postman or any REST client: log in at POST /api/auth/login, copy the token, and send it as Authorization: Bearer <token>.
 
-12. Deployment
-Backend (Node + Express + MySQL)
-Recommended hosts: Railway, Render, or a VPS running PM2
+12. Known limitations
+Social login buttons (Google, Facebook, X) are UI-only, as allowed by the brief; email/phone + password login is fully real.
 
-Set all .env variables in the hosting dashboard (never commit them)
+"Forgot password" and the contact form are interface-only; no email service is connected.
 
-Run npm run db:migrate once on the production database. Run db:seed only if you want demo data.
-
-Set CLIENT_URL to the deployed frontend URL so CORS allows it
-
-Set NODE_ENV=production
-
-Frontend (React + Vite)
-Recommended hosts: Vercel or Netlify
-
-Build command: npm run build (inside client/)
-
-Output directory: dist
-
-Set VITE_API_URL=https://your-backend-url/api before building
-
-Database
-Use a managed MySQL (Railway, PlanetScale, Aiven, AWS RDS, etc.)
-
-Never expose port 3306 publicly
-
-Take regular backups; the app does not create them automatically
-
-Environment checklist for production
-□ Strong JWT_SECRET (32+ random characters)
-□ Real DB_PASSWORD, not empty
-□ GROQ_API_KEY set if the chatbot is enabled
-□ Default seeded accounts removed or passwords changed
-□ CLIENT_URL matches the deployed frontend exactly (including https://)
-□ HTTPS enabled on both frontend and backend
-13. License & ownership
-This project was developed for the client under the agreed contract. All source code and intellectual property are transferred to the client upon final payment. Third-party libraries are used under their respective open-source licenses (MIT, Apache 2.0, ISC).
-
-14. Support
-For setup issues, first check:
-
-Node.js version is 18 or newer (node -v)
-
-MySQL is running and reachable on the host/port in .env
-
-.env exists in server/ and contains a non-empty JWT_SECRET
-
-npm run db:setup was run before npm run dev
-
-Port 5000 (backend) and 5173 (frontend) are not already in use
-
-If the problem persists, capture the error message from the terminal and share it along with the output of node -v, npm -v, and the MySQL version.
+The photo and logo bitmaps from Figma must be added by hand (see "The Figma images").
