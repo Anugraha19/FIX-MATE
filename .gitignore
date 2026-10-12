@@ -1,0 +1,18 @@
+node_modules/
+.env
+dist/
+server/logs/*.log
+server/reports/*.csv
+*.sqlite
+.DS_Store
+# npm/yarn debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor folders
+.vscode/
+.idea/
+
+# OS files (Windows)
+Thumbs.db
